@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const bodyParser = require("body-parser");
 const user = require('./routes/user.js');
 
 dotenv.config();
@@ -8,6 +9,7 @@ dotenv.config();
 const app = express();
 
 app.use(express.json());
+app.use(bodyParser.json());
 app.use('/api', user);
 
 mongoose
