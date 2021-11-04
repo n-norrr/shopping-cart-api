@@ -1,4 +1,3 @@
-const { registerUser } = require('../services/user.js');
 const User = require('../models/User.js');
 const db = require('./db');
 const request = require('supertest');
@@ -14,6 +13,7 @@ afterEach(async () => {
 
 afterAll(async () => {
     await db.close();
+    app.close();
 })
 
 describe('insert', () => {
@@ -23,10 +23,11 @@ describe('insert', () => {
             username: "Kyle23",
             password: "password23"
         }
-        await request(app).post('/register').send(data);
+        const response = await request(app).post("/api/register").send(data);
 
-        const user = await User.findOne({ email: 'kylemcgee23@gmail.com' });
+        const user = await User.findOne({ email: 'kylemcgee23@gmail.com' })
 
+        expect(response.status).toBe(201);
         expect(user.email).toEqual("kylemcgee23@gmail.com");
         expect(user.username).toEqual("Kyle23");
         expect(user.password).toEqual("password23");

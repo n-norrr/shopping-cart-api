@@ -12,15 +12,19 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use('/api', user);
 
-mongoose
+if (require.main === module) {
+    mongoose
     .connect(process.env.DB_URI)
     .then(() => {
-        app.listen(process.env.PORT || 5000, () => {
-            console.log("Backend is running.");
-        });
-
         console.log("MongoDB Connection Successful.")
     })
     .catch((e) => {
         console.log(e);
     });
+}
+
+const server = app.listen(process.env.PORT || 5000, () => {
+    console.log("Backend is running.");
+});
+
+module.exports = server;
