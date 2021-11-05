@@ -16,8 +16,8 @@ afterAll(async () => {
     app.close();
 })
 
-describe('insert', () => {
-    it('create user', async () => {
+describe('Authentication Tests', () => {
+    it('should create user', async () => {
         const data = {
             email: "kylemcgee23@gmail.com",
             username: "Kyle23",

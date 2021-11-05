@@ -1,21 +1,34 @@
+const cryptoJS = require('crypto-js')
 const User = require('../models/User.js');
 
-const registerUser = async (email, username, password) => {
-    if (!email || !username || !password) {
+const registerUser = async (email, username, rawPassword) => {
+    if (!email || !username || !rawPassword) {
         throw new Error('Missing credentials');
     }
 
-    try {
-        const newUser = new User({
-            email,
-            username,
-            password
-        });
+    const password = cryptoJS.AES.encrypt(rawPassword, process.env.CRYPTO_KEY).toString();
 
-        return await newUser.save();
-    } catch (e) {
-        throw new Error('Could not create user.');
-    }
+    const newUser = new User({
+        email,
+        username,
+        password
+    })
+
+    return await newUser.save()
 }
 
-module.exports = { registerUser };
+const loginUser = async (email, password) => {
+    if (!email || !password) {
+        throw new Error('Missing credentials');
+    }
+
+    const user = await User.findOne({ email: email });
+    if (!user) { throw new Error('Could not find user') }
+
+    const decodedPassword = cryptoJS.AES.decrypt(user.password, process.env.CRYPTO_KEY).toString(cryptoJS.enc.Utf8);
+    if (password != decodedPassword) { throw new Error('Incorrect password') }
+
+    return user
+}
+
+module.exports = { registerUser, loginUser };
