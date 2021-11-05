@@ -6,7 +6,11 @@ const register = async (req, res) => {
         const savedUser = await registerUser(email, username, password);
         res.status(201).json(savedUser);
     } catch (e) {
-        res.status(500).json(e.message);
+        if (e.status) {
+            res.status(e.status).json(e.message);
+        } else {
+            res.status(500).json(e.message);
+        }
     }
 }
 
@@ -16,7 +20,11 @@ const login = async (req, res) => {
         const currUser = await loginUser(email, password);
         res.status(200).json(currUser);
     } catch (e) {
-        res.status(500).json(e.message);
+        if (e.status) {
+            res.status(e.status).json(e.message);
+        } else {
+            res.status(500).json(e.message);
+        }
     }
 }
 

@@ -3,7 +3,7 @@ const User = require('../models/User.js');
 
 const registerUser = async (email, username, rawPassword) => {
     if (!email || !username || !rawPassword) {
-        throw new Error('Missing credentials');
+        throw { status: 401, message: 'Missing credentials' }
     }
 
     const password = cryptoJS.AES.encrypt(rawPassword, process.env.CRYPTO_KEY).toString();
@@ -19,14 +19,20 @@ const registerUser = async (email, username, rawPassword) => {
 
 const loginUser = async (email, password) => {
     if (!email || !password) {
-        throw new Error('Missing credentials');
+        throw { status: 401, message: 'Missing credentials' }
     }
 
     const user = await User.findOne({ email: email });
-    if (!user) { throw new Error('Could not find user') }
+
+    if (!user) { 
+        throw { status: 401, message: 'Could not find user' }
+     }
 
     const decodedPassword = cryptoJS.AES.decrypt(user.password, process.env.CRYPTO_KEY).toString(cryptoJS.enc.Utf8);
-    if (password != decodedPassword) { throw new Error('Incorrect password') }
+
+    if (password != decodedPassword) {
+        throw { status: 401, message: 'Incorrect password' }
+    }
 
     return user
 }
