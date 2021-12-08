@@ -2,6 +2,8 @@ const { registerUser } = require('../services/user.js');
 const User = require('../models/User.js');
 const db = require('./db');
 
+require('dotenv').config();
+
 beforeAll(async () => {
     await db.connect();
 })
@@ -26,6 +28,6 @@ describe('insert', () => {
 
         expect(user.email).toEqual("kylemcgee23@gmail.com");
         expect(user.username).toEqual("Kyle23");
-        expect(user.password).toEqual("password23");
+        expect(user.password.length).toBeGreaterThan(0);
     })
 })
