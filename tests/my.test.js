@@ -1,19 +1,18 @@
 const { registerUser } = require('../services/user.js');
 const User = require('../models/User.js');
-const db = require('./db');
-
+const mockdb = require('./mockdb');
 require('dotenv').config();
 
 beforeAll(async () => {
-    await db.connect();
+    await mockdb.start();
 })
 
 afterEach(async () => {
-    await db.clear();
+    await mockdb.clear();
 })
 
 afterAll(async () => {
-    await db.close();
+    await mockdb.close();
 })
 
 describe('insert', () => {

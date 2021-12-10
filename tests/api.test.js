@@ -1,18 +1,18 @@
 const User = require('../models/User.js');
-const db = require('./db');
+const mockdb = require('./mockdb');
 const request = require('supertest');
 const app = require('../index.js');
 
 beforeAll(async () => {
-    await db.connect();
+    await mockdb.start();
 })
 
 afterEach(async () => {
-    await db.clear();
+    await mockdb.clear();
 })
 
 afterAll(async () => {
-    await db.close();
+    await mockdb.close();
     app.close();
 })
 
@@ -30,6 +30,6 @@ describe('Authentication Tests', () => {
         expect(response.status).toBe(201);
         expect(user.email).toEqual("kylemcgee23@gmail.com");
         expect(user.username).toEqual("Kyle23");
-        expect(user.password).toEqual("password23");
+        expect(user.password.length).toBeGreaterThan(0);
     })
 })

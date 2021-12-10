@@ -1,9 +1,10 @@
-const mongoose = require('mongoose');
+const db = require('../db.js');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 
 const mongod = new MongoMemoryServer();
+let connection;
 
-module.exports.connect = async () => {
+module.exports.start = async () => {
     await mongod.start();
     const uri = mongod.getUri();
 
@@ -12,11 +13,11 @@ module.exports.connect = async () => {
         useUnifiedTopology: true
     }
 
-    await mongoose.connect(uri, opts);
+    connection = await db.connect(uri, opts);
 }
 
 module.exports.clear = async() => {
-    const collections = mongoose.connection.collections;
+    const collections = connection.collections;
 
     for (const key in collections) {
         await collections[key].deleteMany();
@@ -24,7 +25,7 @@ module.exports.clear = async() => {
 }
 
 module.exports.close = async () => {
-    await mongoose.connection.dropDatabase();
-    await mongoose.connection.close();
+    await connection.dropDatabase();
+    await connection.close();
     await mongod.stop();
 }
