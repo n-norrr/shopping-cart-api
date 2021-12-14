@@ -2,22 +2,15 @@ const db = require('../db.js');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 
 const mongod = new MongoMemoryServer();
-let connection;
 
 module.exports.start = async () => {
     await mongod.start();
     const uri = mongod.getUri();
-
-    const opts = {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-    }
-
-    connection = await db.connect(uri, opts);
+    await db.connect(uri);
 }
 
-module.exports.clear = async() => {
-    const collections = connection.collections;
+module.exports.clear = async () => {
+    const collections = db.get_collections();
 
     for (const key in collections) {
         await collections[key].deleteMany();
@@ -25,7 +18,7 @@ module.exports.clear = async() => {
 }
 
 module.exports.close = async () => {
-    await connection.dropDatabase();
-    await connection.close();
+    await db.drop_db();
+    await db.disconnect();
     await mongod.stop();
 }

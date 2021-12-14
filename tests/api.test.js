@@ -1,7 +1,7 @@
 const User = require('../models/User.js');
+const app = require('../index.js');
 const mockdb = require('./mockdb');
 const request = require('supertest');
-const app = require('../index.js');
 
 beforeAll(async () => {
     await mockdb.start();

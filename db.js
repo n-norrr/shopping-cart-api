@@ -1,22 +1,46 @@
 const mongoose = require('mongoose');
 
-const connect = async (uri, opts) => {
+let connection;
+
+const connect = async (uri) => {
     try {
+        const opts = {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        }
+
         await mongoose.connect(uri, opts);
+        connection = mongoose.connection;
         console.log("MongoDB Connection Successful.");
-        return (process.env.NODE_ENV === 'test') ? mongoose.connection : null;
     } catch (e) {
         console.log(e);
     }
 }
 
-if (process.env.NODE_ENV !== 'test') {
-    const opts = {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
+const disconnect = async () => {
+    try {
+        await connection.close();
+        console.log("MongoDB Connection Closed.")
+    } catch (e) {
+        console.log(e);
     }
-
-    connect(process.env.DB_URI, opts);
 }
 
-module.exports = { connect };
+const drop_db = async () => {
+    try {
+        await connection.dropDatabase();
+        console.log("MongoDB Database Dropped.")
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+const get_collections = async () => {
+    try {
+        return connection.collections;
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+module.exports = { connect, get_collections, drop_db, disconnect };
