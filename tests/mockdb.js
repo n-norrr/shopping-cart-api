@@ -3,13 +3,13 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 
 const mongod = new MongoMemoryServer();
 
-module.exports.start = async () => {
+const start = async () => {
     await mongod.start();
     const uri = mongod.getUri();
     await db.connect(uri);
 }
 
-module.exports.clear = async () => {
+const clear = async () => {
     const collections = db.get_collections();
 
     for (const key in collections) {
@@ -17,8 +17,10 @@ module.exports.clear = async () => {
     }
 }
 
-module.exports.close = async () => {
+const close = async () => {
     await db.drop_db();
     await db.disconnect();
     await mongod.stop();
 }
+
+module.exports = { start, clear, close }
