@@ -12,7 +12,17 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 const server = app.listen(process.env.PORT || 5000, () => {
-    console.log("Backend is running.");
+    console.log("Express Server now listening on port: " + server.address().port);
 });
+
+const graceful_exit = () => {
+    console.info(' SIGINT signal received.');
+    db.disconnect();
+    server.close(() => {
+        console.log("Express Server Disconnected.")
+    })
+}
+
+process.on('SIGINT', graceful_exit);
 
 module.exports = server;
