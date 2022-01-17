@@ -1,5 +1,5 @@
 const User = require('../models/User.js');
-const app = require('../index.js');
+const server = require('../index.js');
 const mockdb = require('./mockdb');
 const request = require('supertest');
 
@@ -12,8 +12,8 @@ afterEach(async () => {
 })
 
 afterAll(async () => {
+    server.close();
     await mockdb.close();
-    app.close();
 })
 
 describe('Authentication Tests', () => {
@@ -23,7 +23,7 @@ describe('Authentication Tests', () => {
             username: "Kyle23",
             password: "password23"
         }
-        const response = await request(app).post("/api/register").send(data);
+        const response = await request(server).post("/api/register").send(data);
 
         const user = await User.findOne({ email: 'kylemcgee23@gmail.com' })
 

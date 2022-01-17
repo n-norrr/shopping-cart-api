@@ -18,10 +18,12 @@ const server = app.listen(process.env.PORT || 5000, () => {
 const graceful_exit = () => {
     console.info(' SIGINT signal received.');
     db.disconnect();
-    server.close(() => {
-        console.log("Express Server Disconnected.")
-    })
+    server.close();
 }
+
+server.on('close', () => {
+    console.log("Express Server Disconnected.")
+})
 
 process.on('SIGINT', graceful_exit);
 
